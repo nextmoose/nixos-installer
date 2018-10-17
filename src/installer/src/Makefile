@@ -8,6 +8,6 @@ $out:
 $out/bin: $out
 	mkdir "${@}"
 
-$out/bin/hello: $out/bin
-	cp "${^}" "${@}"
+$out/bin/hello: hello.sh $out/bin
+	cp "${<}" "${@}"
 	chmod 0500 "${@}"

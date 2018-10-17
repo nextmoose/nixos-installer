@@ -26,10 +26,10 @@ ${DESTDIR}/installation/installer/default.nix: src/installer/default.nix ${DESTD
 ${DESTDIR}/installation/installer/src: ${DESTDIR}/installation/installer
 	mkdir "${@}"
 
-${DESTDIR}/installation/installer/src/Makefile: src/installer/src/Makefile
+${DESTDIR}/installation/installer/src/Makefile: src/installer/src/Makefile ${DESTDIR}/installation/installer/src
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/installer/src/hello.sh: src/installer/src/hello.sh
+${DESTDIR}/installation/installer/src/hello.sh: src/installer/src/hello.sh ${DESTDIR}/installation/installer/src
 	cp "${<}" "${@}"
 
 ${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix ${DESTDIR}/installation/installer/src/Makefile ${DESTDIR}/installation/installer/src/hello.sh
