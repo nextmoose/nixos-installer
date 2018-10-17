@@ -1,10 +1,12 @@
-all: ${DESTDIR}/machine
+all: clean install
 
 clean:
 	sudo VBoxManage unregistervm --delete nixos || true
 	sudo rm ${DESTDIR}/nixos.vmdk || true
 	sudo lvremove -f /dev/volumes/nixos || true
 	rm --recursive --force ${DESTDIR} || true
+
+install: ${DESTDIR}/machine
 
 ${DESTDIR}:
 	mkdir ${DESTDIR}
@@ -15,7 +17,10 @@ ${DESTDIR}/installation: ${DESTDIR}
 ${DESTDIR}/installation/iso.nix: src/iso.nix ${DESTDIR}/installation
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix
+${DESTDIR}/installation/installer.nix: src/installer.nix ${DESTDIR}/installation
+	cp "${<}" "${@}"
+
+${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer.nix
 	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
 ${DESTDIR}/nixos.vmdk: ${DESTDIR}

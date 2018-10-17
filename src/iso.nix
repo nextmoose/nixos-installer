@@ -5,5 +5,6 @@
     <nixpkgs/nixos/modules/installer/cd-dvd/channel.nix>
   ];
   environment.systemPackages = [
+    (import ./installer/default.nix { inherit pkgs; })
   ];
 }
