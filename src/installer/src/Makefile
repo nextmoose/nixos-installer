@@ -1,6 +1,6 @@
 build:
 
-install: ${DESTDIR}/bin/hello
+install: ${DESTDIR}/bin/installer
 	env
 
 ${DESTDIR}:
@@ -9,6 +9,6 @@ ${DESTDIR}:
 ${DESTDIR}/bin: ${DESTDIR}
 	mkdir "${@}"
 
-${DESTDIR}/bin/installer: hello.sh ${DESTDIR}/bin
+${DESTDIR}/bin/installer: installer.sh ${DESTDIR}/bin
 	cp "${<}" "${@}"
 	chmod 0500 "${@}"

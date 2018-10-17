@@ -29,10 +29,10 @@ ${DESTDIR}/installation/installer/src: ${DESTDIR}/installation/installer
 ${DESTDIR}/installation/installer/src/Makefile: src/installer/src/Makefile ${DESTDIR}/installation/installer/src
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/installer/src/hello.sh: src/installer/src/hello.sh ${DESTDIR}/installation/installer/src
+${DESTDIR}/installation/installer/src/installer.sh: src/installer/src/installer.sh ${DESTDIR}/installation/installer/src
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix ${DESTDIR}/installation/installer/src/Makefile ${DESTDIR}/installation/installer/src/hello.sh
+${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix ${DESTDIR}/installation/installer/src/Makefile ${DESTDIR}/installation/installer/src/installer.sh
 	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
 ${DESTDIR}/nixos.vmdk: ${DESTDIR}
