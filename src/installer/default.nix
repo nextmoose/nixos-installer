@@ -1,7 +1,9 @@
 { pkgs ? import <nixpkgs> {} }:
 with import <nixpkgs> {};
-let script = "doit" ''
-'';
+let
+  script = "doit" ''
+    gpg --help
+  '';
 in
 stdenv.mkDerivation rec {
   name = "installer";
