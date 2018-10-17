@@ -12,3 +12,4 @@ ${DESTDIR}/bin: ${DESTDIR}
 ${DESTDIR}/bin/installer: installer.sh ${DESTDIR}/bin
 	cp "${<}" "${@}"
 	chmod 0500 "${@}"
+	echo ${SCRIPT} > ${DESTDIR}/bin/script

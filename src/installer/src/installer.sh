@@ -1,6 +1,6 @@
 #!/bin/sh
 
-gpg --help &&
+${SCRIPT} &&
     TEMP_DIR=$(mktemp -d) &&
     cleanup() {
 	rm --recursive --force ${TEMP_DIR}

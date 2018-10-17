@@ -12,6 +12,6 @@ stdenv.mkDerivation rec {
     pkgs.coreutils pkgs.mktemp script
   ];
   installPhase = ''
-    make install DESTDIR=$out
+    make install DESTDIR=$out SCRIPT=$script
   '';
 }
