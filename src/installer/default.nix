@@ -4,7 +4,7 @@ stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
   buildIncludes = [
-    pkgs.coreUtils pkgs.gnupg
+    pkgs.coreutil pkgs.mktemp pkgs.gnupg
   ];
   installPhase = ''
     make install DESTDIR=$out
