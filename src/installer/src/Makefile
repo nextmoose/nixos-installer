@@ -1,7 +1,6 @@
 build:
 
 install: ${DESTDIR}/bin/installer
-	env
 
 ${DESTDIR}:
 	mkdir "${@}"
