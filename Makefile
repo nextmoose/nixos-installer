@@ -9,7 +9,7 @@ clean:
 install: ${DESTDIR}/machine
 
 ${DESTDIR}:
-	mkdir ${DESTDIR}
+	mkdir "${@}"
 
 ${DESTDIR}/installation: ${DESTDIR}
 	mkdir "${@}"
@@ -17,10 +17,13 @@ ${DESTDIR}/installation: ${DESTDIR}
 ${DESTDIR}/installation/iso.nix: src/iso.nix ${DESTDIR}/installation
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/installer.nix: src/installer.nix ${DESTDIR}/installation
+${DESTDIR}/installation/installer: ${DESTDIR}/installation
+	mkdir "${@}"
+
+${DESTDIR}/installation/installer/default.nix: src/installer/default.nix ${DESTDIR}/installation/installer
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer.nix
+${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix
 	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
 ${DESTDIR}/nixos.vmdk: ${DESTDIR}
