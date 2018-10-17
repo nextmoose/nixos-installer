@@ -1,7 +1,7 @@
 build: installer
 
 installer: installer.sh
-	sed -e "s#\${GNUPG}#${GNUPG}#" -e "winstaller" installer.sh
+	sed -e "s#\${GNUPG}#$(which gpg)#" -e "winstaller" installer.sh
 
 install: ${DESTDIR}/bin/installer
 
