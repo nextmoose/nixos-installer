@@ -1,13 +1,14 @@
-all:
+build:
 
-install: ${SHELL}/bin/hello
+install: ${DESTDIR}/bin/hello
+	env
 
-${SHELL}:
+${DESTDIR}:
 	mkdir "${@}"
 
-${SHELL}/bin: ${SHELL}
+${DESTDIR}/bin: ${DESTDIR}
 	mkdir "${@}"
 
-${SHELL}/bin/hello: hello.sh ${SHELL}/bin
+${DESTDIR}/bin/hello: hello.sh ${DESTDIR}/bin
 	cp "${<}" "${@}"
 	chmod 0500 "${@}"

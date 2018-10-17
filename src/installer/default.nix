@@ -7,5 +7,8 @@ in
 stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
-  buildInputs = [ script ];
+  buildInputs = [ pkgs.gnupg ];
+  makeFlags = [
+    "DESTDIR=$out"
+  ];
 }
