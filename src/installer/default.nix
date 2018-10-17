@@ -3,7 +3,7 @@ with import <nixpkgs> {};
 stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
-  makeFlags = [
-    "DESTDIR=$out"
-  ];
+  installPhase = ''
+    make install DESTDIR=$out
+  '';
 }
