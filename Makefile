@@ -23,6 +23,15 @@ ${DESTDIR}/installation/installer: ${DESTDIR}/installation
 ${DESTDIR}/installation/installer/default.nix: src/installer/default.nix ${DESTDIR}/installation/installer
 	cp "${<}" "${@}"
 
+${DESTDIR}/installation/installer/src: ${DESTDIR}/installation/installer
+	mkdir "${@}"
+
+${DESTDIR}/installation/installer/src/Makefile: src/installer/src/Makefile
+	cp "${<}" "${@}"
+
+${DESTDIR}/installation/installer/src/hello.sh: src/installer/src/hello.sh
+	cp "${<}" "${@}"
+
 ${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix
 	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
