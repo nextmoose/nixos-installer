@@ -6,7 +6,6 @@ let script = pkgs.writeShellScriptBin "installer" ''
 in
 stdenv.mkDerivation rec {
   name = "installer";
-  buildInputs = [ script ];
   src = ./src;
-  
+  buildInputs = [ script ];
 }

@@ -1,13 +1,13 @@
 all:
 
-install: $out/bin/hello
+install: ${SHELL}/bin/hello
 
-$out:
+${SHELL}:
 	mkdir "${@}"
 
-$out/bin: $out
+${SHELL}/bin: ${SHELL}
 	mkdir "${@}"
 
-$out/bin/hello: hello.sh $out/bin
+${SHELL}/bin/hello: hello.sh ${SHELL}/bin
 	cp "${<}" "${@}"
 	chmod 0500 "${@}"
