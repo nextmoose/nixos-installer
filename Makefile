@@ -1,22 +1,34 @@
-all: build/installation/result build/nixos.vmdk
+all: ${DESTDIR}/machine
 
 clean:
-	sudo rm build/nixos.vmdk
-	sudo lvremove -f /dev/volumes/nixos
-	rm --recursive --force build
+	sudo VBoxManage unregistervm --delete nixos || true
+	sudo rm ${DESTDIR}/nixos.vmdk || true
+	sudo lvremove -f /dev/volumes/nixos || true
+	rm --recursive --force ${DESTDIR} || true
 
-build:
-	mkdir build
+${DESTDIR}:
+	mkdir ${DESTDIR}
 
-build/installation: build
+${DESTDIR}/installation: ${DESTDIR}
 	mkdir "${@}"
 
-build/installation/iso.nix: src/iso.nix build/installation
+${DESTDIR}/installation/iso.nix: src/iso.nix ${DESTDIR}/installation
 	cp "${<}" "${@}"
 
-build/installation/result: build/installation/iso.nix
-	cd build/installation && nix-build '<nixpkgs/nixos>' -A config.system.build.isoImage -I nixos-config=iso.nix
+${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix
+	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
-build/nixos.vmdk:
+${DESTDIR}/nixos.vmdk: ${DESTDIR}
 	sudo lvcreate -y --name nixos --size 100G volumes
-	sudo VBoxManage internalcommands createrawvmdk -filename build/nixos.vmdk -rawdisk /dev/volumes/nixos
+	sudo VBoxManage internalcommands createrawvmdk -filename ${DESTDIR}/nixos.vmdk -rawdisk /dev/volumes/nixos
+
+${DESTDIR}/machine: ${DESTDIR}/installation/result ${DESTDIR}/nixos.vmdk
+	sudo VBoxManage createvm --name nixos --register
+	sudo VBoxManage storagectl nixos --name "SATA Controller" --add SATA
+	sudo VBoxManage storageattach nixos --storagectl "SATA Controller" --port 0 --device 0 --type dvddrive --medium emptydrive
+	sudo VBoxManage storagectl nixos --name "IDE" --add IDE
+	sudo VBoxManage storageattach nixos --storagectl "IDE" --port 0 --device 0 --type hdd --medium ${DESTDIR}/nixos.vmdk
+	sudo VBoxManage modifyvm nixos --memory 2000
+	sudo VBoxManage modifyvm nixos --nic1 nat
+	sudo VBoxManage modifyvm nixos --firmware efi
+	touch ${@}
