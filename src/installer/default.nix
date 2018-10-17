@@ -1,7 +1,7 @@
 { pkgs ? import <nixpkgs> {} }:
 with import <nixpkgs> {};
 let
-  script = "doit" ''
+  script = writeShellScriptBin "doit" ''
     gpg --help
   '';
 in
