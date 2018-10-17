@@ -32,7 +32,7 @@ ${DESTDIR}/installation/installer/src/Makefile: src/installer/src/Makefile
 ${DESTDIR}/installation/installer/src/hello.sh: src/installer/src/hello.sh
 	cp "${<}" "${@}"
 
-${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix
+${DESTDIR}/installation/result: ${DESTDIR}/installation/iso.nix ${DESTDIR}/installation/installer/default.nix ${DESTDIR}/installation/installer/src/Makefile ${DESTDIR}/installation/installer/src/hello.sh
 	cd ${DESTDIR}/installation && nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix
 
 ${DESTDIR}/nixos.vmdk: ${DESTDIR}
