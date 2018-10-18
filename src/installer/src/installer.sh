@@ -1,10 +1,12 @@
 #!/bin/sh
 
-TEMP_DIR=$(mktemp -d) &&
+TEMPDIR=$(mktemp -d) &&
     cleanup() {
-	rm --recursive --force ${TEMP_DIR}
+	echo ${TEMPDIR} &&
+	    bash &&
+	    rm --recursive --force ${TEMPDIR}
     } &&
     trap cleanup EXIT &&
     read -s -p "SYMMETRIC PASSWORD? " SYMMETRIC_PASSWORD &&
-    echo "${SYMMETRIC_PASSWORD}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar ${1} &&
+    echo "${SYMMETRIC_PASSWORD}" | gpg --batch --passphrase-fd 0 --output ${TEMPDIR}/secrets.tar ${STORE_DIR}/secrets.tar.gz &&
     true

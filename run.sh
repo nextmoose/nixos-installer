@@ -1,8 +1,10 @@
 #!/bin/sh
 
 STATUS=64 &&
+    TEMPDIR=$(mktemp -d) &&
     cleanup() {
-	bash &&
+	rm --recursive --force ${TEMPDIR} &&
+	    (sudo VBoxManage controlvm nixos poweroff soft || true) && 
 	    (sudo VBoxManage unregistervm --delete nixos || true) &&
 	    (sudo rm ${DESTDIR}/nixos.vmdk || true) &&
 	    (sudo lvremove -f /dev/volumes/nixos || true) &&
@@ -11,9 +13,52 @@ STATUS=64 &&
 	    true
     } &&
     trap cleanup EXIT &&
+    read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSPHRASE &&
+    if [ -z "${SYMMETRIC_PASSPHRASE}" ]
+    then
+	echo Blank SYMMETRIC PASSPHRASE &&
+	    exit 70
+    fi &&
+    echo &&
+    read -s -p "VERIFY SYMMETRIC PASSPHRASE? " VERIFY_SYMMETRIC_PASSPHRASE &&
+    if [ "${SYMMETRIC_PASSPHRASE}" == "${VERIFY_SYMMETRIC_PASSPHRASE}" ]
+    then
+	echo Verified SYMMETRIC PASSPHRASE
+    else
+	echo Failed to verify SYMMETRIC PASSPHRASE &&
+	    exit 71
+    fi &&
+    echo &&
+    read -s -p "LUKS PASSPHRASE? " LUKS_PASSPHRASE &&
+    if [ -z "${LUKS_PASSPHRASE}" ]
+    then
+	echo Blank LUKS PASSPHRASE &&
+	    exit 72
+    fi &&
+    echo &&
+    read -s -p "VERIFY LUKS PASSPHRASE? " VERIFY_LUKS_PASSPHRASE &&
+    if [ "${LUKS_PASSPHRASE}" == "${VERIFY_LUKS_PASSPHRASE}" ]
+    then
+	echo Verified LUKS PASSPHRASE
+    else
+	echo Failed to verify LUKS PASSPHRASE &&
+	    exit 73
+    fi &&
+    echo &&
+    echo VERIFIED &&
+    echo &&
     mkdir ${DESTDIR} &&
     mkdir ${DESTDIR}/installation &&
     cp --recursive src/. ${DESTDIR}/installation &&
+    mkdir ${TEMPDIR}/secrets &&
+    (cat > ${TEMPDIR}/secrets/installer.env <<EOF
+LUKS_PASSPHRASE=${LUKS_PASSPHRASE}
+EOF
+    ) &&
+    tar --create --file ${TEMPDIR}/secrets.tar --directory ${TEMPDIR}/secrets/ . &&
+    rm --recursive --file ${TEMPDIR}/secrets &&
+    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gpg --symmetric ${TEMPDIR}/secrets.tar &&
+    rm --force ${TEMPDIR}/secrets.tar &&
     (
 	cd ${DESTDIR}/installation &&
 	    nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix &&
