@@ -9,12 +9,12 @@ TEMP_DIR=$(mktemp -d) &&
     while [ "${#}" -gt 0 ]
     do
 	case "${1}" in
-	    --url)
-		URL="${2}" &&
+	    --configuration-url)
+		CONFIGURATION_URL="${2}" &&
 		    shift 2
 		;;
-	    --branch)
-		BRANCH="${2}" &&
+	    --configuration-branch)
+		CONFIGURATION_BRANCH="${2}" &&
 		    shift 2
 		;;
 	    *)
@@ -83,7 +83,7 @@ EOF
     LUKS_PASSPHRASE="$(cat ${TEMP_DIR}/secrets/luks.passphrase)" &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksFormat /dev/sda3 &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksOpen /dev/sda3 root &&
-    echo y | mkfs.ext4 -L ROOT /dev/sda3 &&
+    echo y | mkfs.ext4 -L ROOT /dev/mapper/root &&
     mount /dev/mapper/root /mnt &&
     mkdir /mnt/boot &&
     mount /dev/sda1 /mnt/boot/ &&
