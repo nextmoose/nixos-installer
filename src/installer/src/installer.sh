@@ -9,12 +9,12 @@ TEMP_DIR=$(mktemp -d) &&
     while [ "${#}" -gt 0 ]
     do
 	case "${1}" in
-	    --configuration-url)
-		CONFIGURATION_URL="${2}" &&
+	    --upstream-url)
+		UPSTREAM_URL="${2}" &&
 		    shift 2
 		;;
-	    --configuration-branch)
-		CONFIGURATION_BRANCH="${2}" &&
+	    --upstream-branch)
+		UPSTREAM_BRANCH="${2}" &&
 		    shift 2
 		;;
 	    *)
@@ -100,14 +100,15 @@ EOF
 EOF
     ) &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
-    if [ ! -z "${CONFIGURATION_REMOTE}" ] && [ ! -z "${CONFIGURATION_BRANCH}" ]
+    if [ ! -z "${UPSTREAM_REMOTE}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
     then
 	mkdir ${TEMP_DIR}/configuration &&
-	    git -C ${TEMP_DIR}/configuration init &&
-	    git -C ${TEMP_DIR}/configuration remote add origin "${CONFIGURATION_REMOTE}" &&
-	    git -C ${TEMP_DIR}/configuration fetch origin "${CONFIGURATION_BRANCH}" &&
-	    git -C ${TEMP_DIR}/configuration checkout "origin/${CONFIGURATION_BRANCH}" &&
-	    cp ${TEMP_DIR}/configuration.nix /mnt/etc/nixos/configuration.nix &&
+	    git -C ${TEMP_DIR}/upstream init &&
+	    git -C ${TEMP_DIR}/upstream remote add upstream "${UPSTREAM_REMOTE}" &&
+	    git -C ${TEMP_DIR}/upstream remote set-url --push upstream no_push &&
+	    git -C ${TEMP_DIR}/upstream fetch upstream "${UPSTREAM_BRANCH}" &&
+	    git -C ${TEMP_DIR}/upstream checkout "origin/${UPSTREAM_BRANCH}" &&
+	    cp ${TEMP_DIR}/configuration.nix /mnt/etc/nixos/upstream.nix &&
 	    rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
 	    true
     fi &&
