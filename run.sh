@@ -52,10 +52,6 @@ STATUS=64 &&
     cp --recursive src/. ${DESTDIR}/installation &&
     mkdir ${TEMP_DIR}/secrets &&
     echo "${LUKS_PASSPHRASE}" > ${TEMP_DIR}/secrets/luks.passphrase &&
-    (cat > ${TEMP_DIR}/secrets/installer.env <<EOF
-LUKS_PASSPHRASE=${LUKS_PASSPHRASE}
-EOF
-    ) &&
     tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
     rm --recursive --force ${TEMP_DIR}/secrets &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gpg --symmetric ${TEMP_DIR}/secrets.tar &&

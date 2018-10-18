@@ -11,8 +11,6 @@ TEMP_DIR=$(mktemp -d) &&
     read -s -p "SYMMETRIC PASSWORD? " SYMMETRIC_PASSWORD &&
     echo "${SYMMETRIC_PASSWORD}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar ${STORE_DIR}/secrets.tar.gpg &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
-    source ${TEMP_DIR}/secrets/installer.env &&
-    rm --force ${TEMP_DIR}/secrets/installer.env &&
     (swapoff -L SWAP || true ) &&
     (umount /mnt/nix || true) &&
     (umount /mnt/boot || true) &&
@@ -62,6 +60,7 @@ EOF
     ) | gdisk /dev/sda &&
     mkfs.vfat -F 32 -n BOOT /dev/sda1 &&
     mkswap -L SWAP /dev/sda2 &&
+    LUKS_PASSPHRASE="$(cat ${TEMP_DIR}/secrets/luks.passphrase)" &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksFormat /dev/sda3 &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksOpen /dev/sda3 root &&
     echo y | mkfs.ext4 -L ROOT /dev/sda3 &&
