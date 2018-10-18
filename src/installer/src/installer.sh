@@ -110,7 +110,7 @@ EOF
 	    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
 	    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
 	    git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
-	    cp ${TEMP_DIR}/configuration.nix /mnt/etc/nixos/upstream.nix &&
+	    cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos/upstream.nix &&
 	    rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
 	    true
     fi &&
