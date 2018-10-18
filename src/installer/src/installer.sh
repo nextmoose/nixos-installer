@@ -105,14 +105,14 @@ EOF
     if [ ! -z "${UPSTREAM_URL}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
     then
 	mkdir ${TEMP_DIR}/configuration &&
-	    git -C ${TEMP_DIR}/upstream init &&
-	    git -C ${TEMP_DIR}/upstream remote add upstream "${UPSTREAM_REMOTE}" &&
-	    git -C ${TEMP_DIR}/upstream remote set-url --push upstream no_push &&
-	    git -C ${TEMP_DIR}/upstream fetch upstream "${UPSTREAM_BRANCH}" &&
-	    git -C ${TEMP_DIR}/upstream checkout "origin/${UPSTREAM_BRANCH}" &&
+	    git -C ${TEMP_DIR}/configuration init &&
+	    git -C ${TEMP_DIR}/configuration remote add upstream "${UPSTREAM_REMOTE}" &&
+	    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
+	    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
+	    git -C ${TEMP_DIR}/configuration checkout "origin/${UPSTREAM_BRANCH}" &&
 	    cp ${TEMP_DIR}/configuration.nix /mnt/etc/nixos/upstream.nix &&
 	    rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
 	    true
     fi &&
-    nixos-generate-config --root /mnt &&
+    /run/current-system/sw/bin/nixos-generate-config --root /mnt &&
     true
