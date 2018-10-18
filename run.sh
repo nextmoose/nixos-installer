@@ -4,7 +4,7 @@ STATUS=64 &&
     TEMP_DIR=$(mktemp -d) &&
     cleanup() {
 	rm --recursive --force ${TEMP_DIR} &&
-	    (sudo VBoxManage controlvm nixos poweroff soft || true) && 
+	    ((sudo VBoxManage controlvm nixos poweroff soft && sleep 10s) || true) && 
 	    (sudo VBoxManage unregistervm --delete nixos || true) &&
 	    (sudo rm ${DESTDIR}/nixos.vmdk || true) &&
 	    (sudo lvremove -f /dev/volumes/nixos || true) &&
