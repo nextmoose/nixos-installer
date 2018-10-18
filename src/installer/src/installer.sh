@@ -35,6 +35,7 @@ TEMP_DIR=$(mktemp -d) &&
     (umount /mnt/nix || true) &&
     (umount /mnt/boot || true) &&
     (umount /mnt || true) &&
+    (cryptsetup --key-file - luksFormat /dev/sda3 || true) &&
     lvs --options NAME volumes | tail -n -1 | while read NAME
     do
 	wipefs --all /dev/volumes/${NAME} &&
