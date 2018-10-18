@@ -1,21 +1,16 @@
 { pkgs ? import <nixpkgs> {} }:
-let
-  properties=pkgs.writeText "properties.txt" ''
-    GNUPG=${pkgs.gnupg}
-  '';
-  script=pkgs.writeShellScriptBin "xxx" ''
-    source properties.env
-    echo XXX
-  '';
-in
 with import <nixpkgs> {};
 stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
-  buildPhase = ''
-    make build GNUPG=${pkgs.gnupg}
-  '';
+  buildInputs = [ makeWrapper ];
   installPhase = ''
-    make install DESTDIR=$out
+    mkdir $out &&
+      mkdir $out/scripts &&
+      cp installer.sh $out/scripts &&
+      chmod 0500 $out/scripts/installer.sh &&
+      mkdir $out/bin &&
+      makeWrapper $out/scripts/installer.sh $out/bin/installer &&
+      true
   '';
 }
