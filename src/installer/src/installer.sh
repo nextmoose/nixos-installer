@@ -121,5 +121,5 @@ EOF
 	    true
     fi &&
     /run/current-system/sw/bin/nixos-generate-config --root /mnt &&
-    /run/current-system/sw/bin/nixos-install --root /mnt --no-root-password &&
+    /run/current-system/sw/bin/nixos-install --root /mnt --no-root-passwd &&
     true
