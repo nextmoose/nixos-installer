@@ -2,7 +2,6 @@
 
 TEMP_DIR=$(mktemp -d) &&
     cleanup() {
-	echo ${TEMP_DIR}
 #	rm --recursive --force ${TEMP_DIR} &&
 	    true
     } &&
