@@ -6,6 +6,26 @@ TEMP_DIR=$(mktemp -d) &&
 	    true
     } &&
     trap cleanup EXIT &&
+    while [ "${#}" -gt 0 ]
+    do
+	case "${1}" in
+	    --url)
+		URL="${2}" &&
+		    shift 2
+		;;
+	    --branch)
+		BRANCH="${2}" &&
+		    shift 2
+		;;
+	    *)
+		echo Unsupported Option &&
+		    echo ${1} &&
+		    echo ${0} &&
+		    echo ${@} &&
+		    exit 65
+		;;
+	esac
+    done &&
     read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSPHRASE &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gz.gpg &&
     gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
@@ -80,5 +100,15 @@ EOF
     ) &&
     cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
+    if [ ! -z "${CONFIGURATION_REMOTE}" ] && [ ! -z "${CONFIGURATION_BRANCH}" ]
+    then
+	mkdir ${TEMP_DIR}/configuration &&
+	    git -C ${TEMP_DIR}/configuration init &&
+	    git -C ${TEMP_DIR}/configuration remote add origin "${CONFIGURATION_REMOTE}" &&
+	    git -C ${TEMP_DIR}/configuration fetch origin "${CONFIGURATION_BRANCH}" &&
+	    git -C ${TEMP_DIR}/configuration checkout "origin/${CONFIGURATION_BRANCH}" &&
+	    rsync --verbose --recursive ${TEMP_DIR}/configuration/. /mnt/etc/nixos &&
+	    true
+    fi &&
     nixos-generate-config --root /mnt &&
     true
