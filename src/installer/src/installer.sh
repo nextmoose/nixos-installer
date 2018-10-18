@@ -2,7 +2,8 @@
 
 TEMP_DIR=$(mktemp -d) &&
     cleanup() {
-	rm --recursive --force ${TEMP_DIR} &&
+	echo ${TEMP_DIR}
+#	rm --recursive --force ${TEMP_DIR} &&
 	    true
     } &&
     trap cleanup EXIT &&
@@ -77,10 +78,7 @@ EOF
 }
 EOF
     ) &&
-    cp --recursive ${STORE_DIR}/
-    mkdir /mnt/etc/nixos/installed &&
-    mkdir /mnt/etc/nixos/installed/secrets &&
-    mkdir /mnt/etc/nixos/installed/secrets/src &&
+    cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
     nixos-generate-config --root /mnt &&
     true
