@@ -2,7 +2,7 @@
 
 TEMP_DIR=$(mktemp -d) &&
     cleanup() {
-#	rm --recursive --force ${TEMP_DIR} &&
+	rm --recursive --force ${TEMP_DIR} &&
 	    true
     } &&
     trap cleanup EXIT &&
