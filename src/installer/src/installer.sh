@@ -50,11 +50,6 @@ n
 n
 
 
-+20G
-
-n
-
-
 +64G
 
 n
@@ -69,14 +64,11 @@ EOF
     mkfs.vfat -F 32 -n BOOT /dev/sda1 &&
     mkswap -L SWAP /dev/sda2 &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksFormat /dev/sda3 &&
-    echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksOpen /dev/sda3 nix &&
-    echo y | mkfs.ext4 -L NIX /dev/mapper/nix &&
-    echo y | mkfs.ext4 -L ROOT /dev/sda4 &&
-    mount /dev/sda4 /mnt &&
+    echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksOpen /dev/sda3 root &&
+    echo y | mkfs.ext4 -L ROOT /dev/sda3 &&
+    mount /dev/mapper/root /mnt &&
     mkdir /mnt/boot &&
-    mkdir /mnt/nix &&
     mount /dev/sda1 /mnt/boot/ &&
-    mount /dev/mapper/nix /mnt/nix &&
     swapon -L SWAP &&
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
