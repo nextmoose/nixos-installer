@@ -13,7 +13,7 @@ stdenv.mkDerivation rec {
       cp installer.sh $out/scripts &&
       chmod 0500 $out/scripts/installer.sh &&
       mkdir $out/bin &&
-      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg mktemp coreutils util-linux lvm2 dosfstools cryptsetup e2fsprogs nixos-generate-config ]} --set STORE_DIR $out &&
+      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg mktemp coreutils lvm2 dosfstools cryptsetup e2fsprogs ]} --set STORE_DIR $out &&
       true
   '';
 }
