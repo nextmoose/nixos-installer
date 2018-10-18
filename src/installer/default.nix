@@ -1,17 +1,12 @@
 { pkgs ? import <nixpkgs> {} }:
 with import <nixpkgs> {};
-let
-  script = writeShellScriptBin "doit" ''
-    gpg --help
-  '';
-in
 stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
-  buildInputs = [
-    pkgs.coreutils pkgs.mktemp script pkgs.gnupg
-  ];
+  buildPhase = ''
+    make build GNUPG=${pkgs.gnupg}
+  '';
   installPhase = ''
-    make install DESTDIR=$out GNUPG=${pkgs.gnupg}
+    make install DESTDIR=$out
   '';
 }
