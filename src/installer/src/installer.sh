@@ -8,8 +8,9 @@ TEMP_DIR=$(mktemp -d) &&
 	    true
     } &&
     trap cleanup EXIT &&
-    read -s -p "SYMMETRIC PASSWORD? " SYMMETRIC_PASSWORD &&
-    echo "${SYMMETRIC_PASSWORD}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar ${STORE_DIR}/secrets.tar.gpg &&
+    read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSWORD &&
+    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gpg &&
+    gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
     (swapoff -L SWAP || true ) &&
     (umount /mnt/nix || true) &&
@@ -70,6 +71,7 @@ EOF
     swapon -L SWAP &&
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
+    USER_PASSWORD="$(cat ${TEMP_DIR}/secrets/user.password)" &&
     (cat > /mnt/etc/nixos/password.nix <<EOF
 { config, pkgs, ... }:
 {

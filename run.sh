@@ -45,6 +45,22 @@ STATUS=64 &&
 	    exit 73
     fi &&
     echo &&
+    read -s -p "USER PASSWORD? " USER_PASSWORD &&
+    if [ -z "${USER_PASSWORD}" ]
+    then
+	echo Blank USER PASSWORD &&
+	    exit 74
+    fi &&
+    echo &&
+    read -s -p "VERIFY USER PASSWORD? " VERIFY_USER_PASSWORD &&
+    if [ "${USER_PASSWORD}" == "${VERIFY_USER_PASSWORD}" ]
+    then
+	echo Verified USER PASSWORD
+    else
+	echo Failed to verify USER PASSWORD &&
+	    exit 75
+    fi &&
+    echo &&
     echo VERIFIED &&
     echo &&
     mkdir ${DESTDIR} &&
@@ -52,9 +68,12 @@ STATUS=64 &&
     cp --recursive src/. ${DESTDIR}/installation &&
     mkdir ${TEMP_DIR}/secrets &&
     echo "${LUKS_PASSPHRASE}" > ${TEMP_DIR}/secrets/luks.passphrase &&
+    echo "${USER_PASSWORD}" > ${TEMP_DIR}/secrets/user.password &&
     tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
     rm --recursive --force ${TEMP_DIR}/secrets &&
-    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gpg --symmetric ${TEMP_DIR}/secrets.tar &&
+    gzip -9 --to-stdout ${TEMP_DIR}/secrets.tar > ${TEMP_DIR}/secrets.tar.gz &&
+    rm --recursive --force ${TEMP_DIR}/secrets.tar &&
+    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gz.gpg --symmetric ${TEMP_DIR}/secrets.tar.gz &&
     rm --force ${TEMP_DIR}/secrets.tar &&
     (
 	cd ${DESTDIR}/installation &&

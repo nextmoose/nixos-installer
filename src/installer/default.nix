@@ -7,8 +7,8 @@ stdenv.mkDerivation rec {
   installPhase = ''
     mkdir $out &&
       mkdir $out/etc &&
-      cp secrets.tar.gpg $out/etc &&
-      chmod 0400 $out/etc/secrets.tar.gpg &&
+      cp secrets.tar.gz.gpg $out/etc &&
+      chmod 0400 $out/etc/secrets.tar.gz.gpg &&
       mkdir $out/scripts &&
       cp installer.sh $out/scripts &&
       chmod 0500 $out/scripts/installer.sh &&
