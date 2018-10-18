@@ -78,11 +78,11 @@ EOF
   users.extraUsers.user.hashedPassword = "$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512)";
 }
 EOF
-    ) &&  
+    ) &&
+    cp --recursive ${STORE_DIR}/
     mkdir /mnt/etc/nixos/installed &&
     mkdir /mnt/etc/nixos/installed/secrets &&
     mkdir /mnt/etc/nixos/installed/secrets/src &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
     nixos-generate-config --root /mnt &&
     true
-

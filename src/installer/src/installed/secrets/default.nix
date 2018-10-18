@@ -17,8 +17,11 @@ stdenv.mkDerivation rec {
       mkdir $out/scripts &&
       cp secret.sh $out/scripts &&
       chmod 0500 $out/scripts/secret.sh &&
+      cp secrets.sh $out/scripts &&
+      chmod 0500 $out/scripts/secrets.sh &&
       mkdir $out/bin &&
       makeWrapper $out/scripts/secret.sh $out/bin/secret --set STORE_DIR $out &&
+      makeWrapper $out/scripts/secrets.sh $out/bin/secrets --set STORE_DIR $out &&      
       true
   '';
 }

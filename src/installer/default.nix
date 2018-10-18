@@ -9,6 +9,7 @@ stdenv.mkDerivation rec {
       mkdir $out/etc &&
       cp secrets.tar.gz.gpg $out/etc &&
       chmod 0400 $out/etc/secrets.tar.gz.gpg &&
+      cp --recursive installed $out/etc &&
       mkdir $out/scripts &&
       cp installer.sh $out/scripts &&
       chmod 0500 $out/scripts/installer.sh &&
