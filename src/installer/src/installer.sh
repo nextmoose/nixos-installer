@@ -91,14 +91,14 @@ EOF
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
     USER_PASSWORD="$(cat ${TEMP_DIR}/secrets/user.password)" &&
-    (cat > /mnt/etc/nixos/password.nix <<EOF
+    cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
+    (cat > /mnt/etc/nixos/installed/password.nix <<EOF
 { config, pkgs, ... }:
 {
   users.extraUsers.user.hashedPassword = "$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512)";
 }
 EOF
     ) &&
-    cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
     if [ ! -z "${CONFIGURATION_REMOTE}" ] && [ ! -z "${CONFIGURATION_BRANCH}" ]
     then
@@ -107,7 +107,8 @@ EOF
 	    git -C ${TEMP_DIR}/configuration remote add origin "${CONFIGURATION_REMOTE}" &&
 	    git -C ${TEMP_DIR}/configuration fetch origin "${CONFIGURATION_BRANCH}" &&
 	    git -C ${TEMP_DIR}/configuration checkout "origin/${CONFIGURATION_BRANCH}" &&
-	    rsync --verbose --recursive ${TEMP_DIR}/configuration/. /mnt/etc/nixos &&
+	    cp ${TEMP_DIR}/configuration.nix /mnt/etc/nixos/configuration.nix &&
+	    rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
 	    true
     fi &&
     nixos-generate-config --root /mnt &&
