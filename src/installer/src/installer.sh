@@ -110,8 +110,14 @@ EOF
 	    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
 	    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
 	    git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
-	    cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos/upstream.nix &&
-	    rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
+	    if [ -f ${TEMP_DIR}/configuration/configuration.nix ]
+	    then
+		cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos/upstream.nix
+	    fi &&
+	    if [ -d ${TEMP_DIR}/configuration/custom ]
+	    then
+		rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos
+	    fi &&
 	    true
     fi &&
     /run/current-system/sw/bin/nixos-generate-config --root /mnt &&
