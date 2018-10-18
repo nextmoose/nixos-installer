@@ -9,7 +9,7 @@ TEMP_DIR=$(mktemp -d) &&
     } &&
     trap cleanup EXIT &&
     read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSWORD &&
-    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gpg &&
+    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gz.gpg &&
     gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
     (swapoff -L SWAP || true ) &&
