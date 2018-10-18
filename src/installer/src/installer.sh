@@ -11,7 +11,6 @@ TEMP_DIR=$(mktemp -d) &&
     read -s -p "SYMMETRIC PASSWORD? " SYMMETRIC_PASSWORD &&
     echo "${SYMMETRIC_PASSWORD}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar ${STORE_DIR}/secrets.tar.gpg &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
-    rm --force ${TEMP_DIR}/secrets.tar &&
     source ${TEMP_DIR}/secrets/installer.env &&
     rm --force ${TEMP_DIR}/secrets/installer.env &&
     (swapoff -L SWAP || true ) &&
@@ -78,7 +77,11 @@ EOF
   users.extraUsers.user.hashedPassword = "$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512)";
 }
 EOF
-    ) &&
+    ) &&  
+    mkdir /mnt/etc/nixos/installed &&
+    mkdir /mnt/etc/nixos/installed/secrets &&
+    mkdir /mnt/etc/nixos/installed/secrets/src &&
+    mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
     nixos-generate-config --root /mnt &&
     true
 
