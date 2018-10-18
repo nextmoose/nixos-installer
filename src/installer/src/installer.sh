@@ -2,7 +2,8 @@
 
 TEMP_DIR=$(mktemp -d) &&
     cleanup() {
-	rm --recursive --force ${TEMP_DIR} &&
+	echo ${PATH} &&
+	    rm --recursive --force ${TEMP_DIR} &&
 	    true
     } &&
     trap cleanup EXIT &&
@@ -35,7 +36,7 @@ TEMP_DIR=$(mktemp -d) &&
     (umount /mnt/nix || true) &&
     (umount /mnt/boot || true) &&
     (umount /mnt || true) &&
-    (cryptsetup --key-file - luksFormat /dev/sda3 || true) &&
+    (cryptsetup --key-file - luksClose /dev/sda3 || true) &&
     lvs --options NAME volumes | tail -n -1 | while read NAME
     do
 	wipefs --all /dev/volumes/${NAME} &&
@@ -101,7 +102,7 @@ EOF
 EOF
     ) &&
     mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
-    if [ ! -z "${UPSTREAM_REMOTE}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
+    if [ ! -z "${UPSTREAM_URL}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
     then
 	mkdir ${TEMP_DIR}/configuration &&
 	    git -C ${TEMP_DIR}/upstream init &&
