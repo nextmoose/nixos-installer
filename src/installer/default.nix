@@ -10,7 +10,7 @@ stdenv.mkDerivation rec {
       cp installer.sh $out/scripts &&
       chmod 0500 $out/scripts/installer.sh &&
       mkdir $out/bin &&
-      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg ]} --set STORE_DIR $out &&
+      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg mktemp ]} --set STORE_DIR $out &&
       true
   '';
 }

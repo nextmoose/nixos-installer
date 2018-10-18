@@ -75,7 +75,7 @@ EOF
     sudo VBoxManage modifyvm nixos --nic1 nat &&
     sudo VBoxManage modifyvm nixos --firmware efi &&
     sudo VBoxManage startvm nixos &&
-    read -p "IS IT OK? y/n" ISITOK &&
+    read -p "IS IT OK? y/n " ISITOK &&
     [ "${ISITOK}" == "y" ] &&
     STATUS=0 &&
     true
