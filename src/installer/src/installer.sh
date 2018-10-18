@@ -106,7 +106,7 @@ EOF
     then
 	mkdir ${TEMP_DIR}/configuration &&
 	    git -C ${TEMP_DIR}/configuration init &&
-	    git -C ${TEMP_DIR}/configuration remote add upstream "${UPSTREAM_REMOTE}" &&
+	    git -C ${TEMP_DIR}/configuration remote add upstream "${UPSTREAM_URL}" &&
 	    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
 	    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
 	    git -C ${TEMP_DIR}/configuration checkout "origin/${UPSTREAM_BRANCH}" &&
