@@ -1,9 +1,9 @@
 #!/bin/sh
 
 STATUS=64 &&
-    TEMPDIR=$(mktemp -d) &&
+    TEMP_DIR=$(mktemp -d) &&
     cleanup() {
-	rm --recursive --force ${TEMPDIR} &&
+	rm --recursive --force ${TEMP_DIR} &&
 	    (sudo VBoxManage controlvm nixos poweroff soft || true) && 
 	    (sudo VBoxManage unregistervm --delete nixos || true) &&
 	    (sudo rm ${DESTDIR}/nixos.vmdk || true) &&
@@ -50,15 +50,16 @@ STATUS=64 &&
     mkdir ${DESTDIR} &&
     mkdir ${DESTDIR}/installation &&
     cp --recursive src/. ${DESTDIR}/installation &&
-    mkdir ${TEMPDIR}/secrets &&
-    (cat > ${TEMPDIR}/secrets/installer.env <<EOF
+    mkdir ${TEMP_DIR}/secrets &&
+    echo "${LUKS_PASSPHRASE}" > ${TEMP_DIR}/secrets/luks.passphrase &&
+    (cat > ${TEMP_DIR}/secrets/installer.env <<EOF
 LUKS_PASSPHRASE=${LUKS_PASSPHRASE}
 EOF
     ) &&
-    tar --create --file ${TEMPDIR}/secrets.tar --directory ${TEMPDIR}/secrets/ . &&
-    rm --recursive --force ${TEMPDIR}/secrets &&
-    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gpg --symmetric ${TEMPDIR}/secrets.tar &&
-    rm --force ${TEMPDIR}/secrets.tar &&
+    tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
+    rm --recursive --force ${TEMP_DIR}/secrets &&
+    echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gpg --symmetric ${TEMP_DIR}/secrets.tar &&
+    rm --force ${TEMP_DIR}/secrets.tar &&
     (
 	cd ${DESTDIR}/installation &&
 	    nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix &&
