@@ -13,6 +13,7 @@ STATUS=64 &&
 	    true
     } &&
     trap cleanup EXIT &&
+    rm --force nixos-18.03.133245.d16a7abceb7-x86_64-linux.iso &&
     read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSPHRASE &&
     if [ -z "${SYMMETRIC_PASSPHRASE}" ]
     then
@@ -94,4 +95,5 @@ STATUS=64 &&
     read -p "IS IT OK? y/n " ISITOK &&
     [ "${ISITOK}" == "y" ] &&
     STATUS=0 &&
+    cp build/installation/result/iso/nixos-18.03.133245.d16a7abceb7-x86_64-linux.iso . &&
     true
