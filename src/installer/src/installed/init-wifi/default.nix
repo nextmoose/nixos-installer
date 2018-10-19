@@ -11,7 +11,7 @@ stdenv.mkDerivation rec {
       mkdir $out/scripts &&
       cp init-wifi.sh $out/scripts &&
       chmod 0500 $out/scripts/init-wifi.sh &&
-      makeWrapper $out/scripts/init-wifi.sh $out/bin/init-wifi --set PATH ${lib.makeBinPath [ networkmanager ]}  --set STORE_DIR $out &&
+      makeWrapper $out/scripts/init-wifi.sh $out/bin/init-wifi --set PATH ${lib.makeBinPath [ mktemp coreutils gzip gnutar networkmanager ]}  --set STORE_DIR $out &&
       true
   '';
 }

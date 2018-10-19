@@ -75,18 +75,22 @@ STATUS=64 &&
     secrets gpg2.owner.trust > ${TEMP_DIR}/init-read-only-pass/gpg2.owner.trust &&
     tar --create --file ${TEMP_DIR}/init-read-only-pass.tar --directory ${TEMP_DIR}/init-read-only-pass . &&
     gzip --to-stdout ${TEMP_DIR}/init-read-only-pass.tar > ${TEMP_DIR}/init-read-only-pass.tar.gz &&
+    mkdir ${TEMP_DIR}/init-wifi &&
+    (cat > ${TEMP_DIR}/init-wifi/0.env <<EOF
+SSID="Richmond Sq Guest"
+PASSWORD="guestwifi"
+EOF
+    ) &&
+    tar --create --file ${TEMP_DIR}/init-wifi.tar --directory ${TEMP_DIR}/init-wifi . &&
+    gzip --to-stdout ${TEMP_DIR}/init-wifi.tar > ${TEMP_DIR}/init-wifi.tar.gz &&
     mkdir ${TEMP_DIR}/secrets &&
     (cat > ${TEMP_DIR}/secrets/installer.env <<EOF
 LUKS_PASSPHRASE="${LUKS_PASSPHRASE}"
 USER_PASSWORD="${USER_PASSWORD}"
 EOF
     ) &&
-    (cat > ${TEMP_DIR}/secrets/init-wifi.env <<EOF
-SSID="Richmond Sq Guest"
-PASSWORD="guestwifi"
-EOF
-    ) &&
     cp ${TEMP_DIR}/init-read-only-pass.tar.gz ${TEMP_DIR}/secrets &&
+    cp ${TEMP_DIR}/init-wifi.tar.gz ${TEMP_DIR}/secrets &&
     tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
     gzip -9 --to-stdout ${TEMP_DIR}/secrets.tar > ${TEMP_DIR}/secrets.tar.gz &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gz.gpg --symmetric ${TEMP_DIR}/secrets.tar.gz &&
