@@ -3,7 +3,7 @@
 TEMP_DIR=$(mktemp -d) &&
     cleanup() {
 	echo ${PATH} &&
-#	    rm --recursive --force ${TEMP_DIR} &&
+	    rm --recursive --force ${TEMP_DIR} &&
 	    true
     } &&
     trap cleanup EXIT &&
