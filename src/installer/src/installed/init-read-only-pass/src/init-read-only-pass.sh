@@ -50,4 +50,4 @@ TEMP_DIR=$(mktemp -d) &&
     pass git checkout upstream/${UPSTREAM_BRANCH} &&
     ln --symbolic --force $(which pre-commit) ${HOME}/.password-store/.git/hooks &&
     ln --symbolic --force $(which pre-push) ${HOME}/.password-store/.git/hooks &&
-    trust
+    true
