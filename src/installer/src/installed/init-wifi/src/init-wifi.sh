@@ -12,7 +12,7 @@ TEMP_DIR=$(mktemp -d) &&
     ls -1 ${TEMP_DIR}/secrets | while read FILE
     do
 	source ${TEMP_DIR}/secrets/${FILE} &&
-	    nmcli device wifi connect "${SSID}" password "${PASSWORD}" &&
+	    /run/wrappers/bin/sudo nmcli device wifi connect "${SSID}" password "${PASSWORD}" &&
 	    true
     done &&
     true
