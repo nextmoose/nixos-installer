@@ -7,4 +7,7 @@
   environment.systemPackages = [
     (import ./installer/default.nix { inherit pkgs; })
   ];
+  programs.bash.shellInit = ''
+    wpa_supplicant -B -i wlo1 -c <(wpa_passphrase 'Richmond Sq Guest' 'guestwifi')
+  '';
 }
