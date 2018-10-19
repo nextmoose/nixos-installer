@@ -92,7 +92,7 @@ EOF
     swapon -L SWAP &&
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
-    HASHED_USER_PASSWORD=$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512) &&
+    HASHED_USER_PASSWORD=$(echo -n ${USER_PASSWORD} | mkpasswd --stdin -m sha-512) &&
     cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     (cat > /mnt/etc/nixos/installed/password.nix <<EOF
 { config, pkgs, ... }:
