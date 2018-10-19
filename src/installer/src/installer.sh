@@ -102,7 +102,7 @@ EOF
 }
 EOF
     ) &&
-    mv ${TEMP_DIR}/secrets.tar /mnt/etc/nixos/installed/secrets/src &&
+    cp ${TEMP_DIR}/secrets/init-read-only-pass /mnt/etc/nixos/installed/init-read-only-pass/src/secrets.tar.gz &&
     if [ ! -z "${UPSTREAM_URL}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
     then
 	mkdir ${TEMP_DIR}/configuration &&

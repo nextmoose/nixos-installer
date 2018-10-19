@@ -68,15 +68,20 @@ STATUS=64 &&
     mkdir ${DESTDIR} &&
     mkdir ${DESTDIR}/installation &&
     cp --recursive src/. ${DESTDIR}/installation &&
+    mkdir ${TEMP_DIR}/init-read-only-pass &&
+    secrets gpg.secret.key > ${TEMP_DIR}/init-read-only-pass/gpg.secret.key &&
+    secrets gpg.owner.trust > ${TEMP_DIR}/init-read-only-pass/gpg.owner.trust &&
+    secrets gpg2.secret.key > ${TEMP_DIR}/init-read-only-pass/gpg.secret.key &&
+    secrets gpg2.owner.trust > ${TEMP_DIR}/init-read-only-pass/gpg2.owner.trust &&
+    tar --create --file ${TEMP_DIR}/init-read-only-pass.tar --directory ${TEMP_DIR}/init-read-only-pass . &&
+    gzip --to-stdout${TEMP_DIR}/init-read-only-pass.tar > ${TEMP_DIR}/init-read-only-pass.tar.gz &&
     mkdir ${TEMP_DIR}/secrets &&
     echo "${LUKS_PASSPHRASE}" > ${TEMP_DIR}/secrets/luks.passphrase &&
     echo "${USER_PASSWORD}" > ${TEMP_DIR}/secrets/user.password &&
+    cp ${TEMP_DIR}/init-read-only-pass.tar.gz ${TEMP_DIR}/secrets &&
     tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
-    rm --recursive --force ${TEMP_DIR}/secrets &&
     gzip -9 --to-stdout ${TEMP_DIR}/secrets.tar > ${TEMP_DIR}/secrets.tar.gz &&
-    rm --recursive --force ${TEMP_DIR}/secrets.tar &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${DESTDIR}/installation/installer/src/secrets.tar.gz.gpg --symmetric ${TEMP_DIR}/secrets.tar.gz &&
-    rm --force ${TEMP_DIR}/secrets.tar &&
     (
 	cd ${DESTDIR}/installation &&
 	    nix-${DESTDIR} '<nixpkgs/nixos>' -A config.system.${DESTDIR}.isoImage -I nixos-config=iso.nix &&
