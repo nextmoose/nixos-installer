@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "${STORE_DIR}/${2}"
+echo "${STORE_DIR}/${@}"
