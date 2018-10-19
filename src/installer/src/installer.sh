@@ -93,11 +93,12 @@ EOF
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
     USER_PASSWORD="$(cat ${TEMP_DIR}/secrets/user.password)" &&
+    HASHED_USER_PASSWORD=$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512) &&
     cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     (cat > /mnt/etc/nixos/installed/password.nix <<EOF
 { config, pkgs, ... }:
 {
-  users.extraUsers.user.hashedPassword = "$(echo -n ${USER_PASSWORD} | mkpasswd --stdin -m sha-512)";
+  users.extraUsers.user.hashedPassword = "${HASHED_USER_PASSWORD}";
 }
 EOF
     ) &&
@@ -112,7 +113,7 @@ EOF
 	    git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
 	    if [ -f ${TEMP_DIR}/configuration/configuration.nix ]
 	    then
-		cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos/upstream.nix
+		cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos
 	    fi &&
 	    if [ -d ${TEMP_DIR}/configuration/custom ]
 	    then
