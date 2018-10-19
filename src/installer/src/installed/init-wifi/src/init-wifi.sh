@@ -11,7 +11,7 @@ TEMP_DIR=$(mktemp -d) &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
     ls -1 ${TEMP_DIR}/secrets | while read FILE
     do
-	source ${TEMP_DIR}/${FILE} &&
+	source ${TEMP_DIR}/secrets/${FILE} &&
 	    nmcli device wifi connect "${SSID}" password "${PASSWORD}" &&
 	    true
     done &&
