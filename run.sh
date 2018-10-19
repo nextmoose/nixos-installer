@@ -76,8 +76,16 @@ STATUS=64 &&
     tar --create --file ${TEMP_DIR}/init-read-only-pass.tar --directory ${TEMP_DIR}/init-read-only-pass . &&
     gzip --to-stdout ${TEMP_DIR}/init-read-only-pass.tar > ${TEMP_DIR}/init-read-only-pass.tar.gz &&
     mkdir ${TEMP_DIR}/secrets &&
-    echo "${LUKS_PASSPHRASE}" > ${TEMP_DIR}/secrets/luks.passphrase &&
-    echo "${USER_PASSWORD}" > ${TEMP_DIR}/secrets/user.password &&
+    (cat > ${TEMP_DIR}/secrets/installer.env <<EOF
+LUKS_PASSPHRASE="${LUKS_PASSPHRASE}"
+USER_PASSWORD="${USER_PASSWORD}"
+EOF
+    ) &&
+    (cat > ${TEMP_DIR}/secrets/init-wifi.env <<EOF
+SSID="Richmond Sq Guest"
+PASSWORD="guestwifi"
+EOF
+    ) &&
     cp ${TEMP_DIR}/init-read-only-pass.tar.gz ${TEMP_DIR}/secrets &&
     tar --create --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets/ . &&
     gzip -9 --to-stdout ${TEMP_DIR}/secrets.tar > ${TEMP_DIR}/secrets.tar.gz &&

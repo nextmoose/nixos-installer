@@ -32,6 +32,7 @@ TEMP_DIR=$(mktemp -d) &&
     gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
     mkdir ${TEMP_DIR}/secrets &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
+    source ${TEMP_DIR}/secrets/installer.env &&
     (swapoff -L SWAP || true ) &&
     (umount /mnt/nix || true) &&
     (umount /mnt/boot || true) &&
@@ -82,7 +83,6 @@ EOF
     ) | gdisk /dev/sda &&
     mkfs.vfat -F 32 -n BOOT /dev/sda1 &&
     mkswap -L SWAP /dev/sda2 &&
-    LUKS_PASSPHRASE="$(cat ${TEMP_DIR}/secrets/luks.passphrase)" &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksFormat /dev/sda3 &&
     echo -n "${LUKS_PASSPHRASE}" | cryptsetup --key-file - luksOpen /dev/sda3 root &&
     echo y | mkfs.ext4 -L ROOT /dev/mapper/root &&
@@ -92,7 +92,6 @@ EOF
     swapon -L SWAP &&
     mkdir /mnt/etc &&
     mkdir /mnt/etc/nixos &&
-    USER_PASSWORD="$(cat ${TEMP_DIR}/secrets/user.password)" &&
     HASHED_USER_PASSWORD=$(echo ${USER_PASSWORD} | mkpasswd --stdin -m sha-512) &&
     cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
     (cat > /mnt/etc/nixos/installed/password.nix <<EOF
