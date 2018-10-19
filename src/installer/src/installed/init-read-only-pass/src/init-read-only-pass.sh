@@ -46,8 +46,8 @@ TEMP_DIR=$(mktemp -d) &&
     pass git init &&
     pass git remote add upstream ${UPSTREAM_URL} &&
     pass git remote set-url --push upstream no_push
-    pass git remote fetch origin ${UPSTREAM_BRANCH} &&
-    pass git checkout origin/${UPSTREAM_BRANCH} &&
+    pass git fetch upstream ${UPSTREAM_BRANCH} &&
+    pass git checkout upstream/${UPSTREAM_BRANCH} &&
     ln --symbolic --force $(which pre-commit) ${HOME}/.password-store/.git/hooks &&
     ln --symbolic --force $(which pre-push) ${HOME}/.password-store/.git/hooks &&
     trust
