@@ -4,10 +4,10 @@ stdenv.mkDerivation rec {
   name = "init-wifi";
   src = ./src;
   buildInputs = [ makeWrapper ];
-  buildPhase = ''
-  '';
   installPhase = ''
     mkdir $out &&
+      mkdir $out/etc &&
+      cp secrets.tar.gz $out/etc &&
       mkdir $out/scripts &&
       cp init-wifi.sh $out/scripts &&
       chmod 0500 $out/scripts/init-wifi.sh &&
