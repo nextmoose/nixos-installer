@@ -1,6 +1,7 @@
 #!/bin/sh
 
 STATUS=64 &&
+    DESTDIR=build &&
     TEMP_DIR=$(mktemp -d) &&
     cleanup() {
 	rm --recursive --force ${TEMP_DIR} &&
