@@ -71,7 +71,7 @@ STATUS=64 &&
     mkdir ${TEMP_DIR}/init-read-only-pass &&
     secrets gpg.secret.key > ${TEMP_DIR}/init-read-only-pass/gpg.secret.key &&
     secrets gpg.owner.trust > ${TEMP_DIR}/init-read-only-pass/gpg.owner.trust &&
-    secrets gpg2.secret.key > ${TEMP_DIR}/init-read-only-pass/gpg.secret.key &&
+    secrets gpg2.secret.key > ${TEMP_DIR}/init-read-only-pass/gpg2.secret.key &&
     secrets gpg2.owner.trust > ${TEMP_DIR}/init-read-only-pass/gpg2.owner.trust &&
     tar --create --file ${TEMP_DIR}/init-read-only-pass.tar --directory ${TEMP_DIR}/init-read-only-pass . &&
     gzip --to-stdout ${TEMP_DIR}/init-read-only-pass.tar > ${TEMP_DIR}/init-read-only-pass.tar.gz &&
