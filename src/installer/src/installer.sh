@@ -119,6 +119,10 @@ EOF
 	    then
 		rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos
 	    fi &&
+	    if [ -f ${TEMP_DIR}/configuration/install.sh ]
+	    then
+		sh ${TEMP_DIR}/configuration/install.sh
+	    fi &&
 	    true
     fi &&
     PATH=/run/current-system/sw/bin nixos-generate-config --root /mnt &&
