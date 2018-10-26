@@ -1,5 +1,8 @@
 { pkgs ? import <nixpkgs> {} }:
 with import <nixpkgs> {};
+let
+  installed = (import ./src/installed/default.nix { inherit pkgs; });
+in
 stdenv.mkDerivation rec {
   name = "installer";
   src = ./src;
@@ -14,7 +17,7 @@ stdenv.mkDerivation rec {
       cp installer.sh $out/scripts &&
       chmod 0500 $out/scripts/installer.sh &&
       mkdir $out/bin &&
-      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg mktemp coreutils lvm2 dosfstools cryptsetup e2fsprogs gzip gnutar utillinux git gnused gnugrep gptfdisk rsync mkpasswd bash ]} --set STORE_DIR $out &&
+      makeWrapper $out/scripts/installer.sh $out/bin/installer --set PATH ${lib.makeBinPath [ gnupg mktemp coreutils lvm2 dosfstools cryptsetup e2fsprogs gzip gnutar utillinux git gnused gnugrep gptfdisk rsync mkpasswd bash installed ]} --set STORE_DIR $out &&
       true
   '';
 }
