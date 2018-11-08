@@ -67,4 +67,4 @@ The run script
    1. HASHED USER PASSWORD.  You can set the user password in the configuration.nix file without publicly announcing it by referencing a file in the /installed directory.
    2. GPG SECRET KEYS.
    3. wifi credential ... this is obviously a kludge that assumes your laptop's location ... it works for me, but probably not for you.
-3. You should put your nix expressions in the /custom directory.  By putting your nix expressions in the /custom directory, we can avoid collisions with either expressions that the installer creates (in the /installed directory) or that nixos-generate creates (/hardware.nix).
+3. You should put your nix expressions in the /custom directory.  By putting your nix expressions in the /custom directory, we can avoid collisions with either expressions that the installer creates (in the /installed directory) or that nixos-generate creates (/hardware.nix
