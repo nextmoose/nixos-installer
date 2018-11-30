@@ -12,21 +12,52 @@ TEMP_DIR=$(mktemp -d) &&
 	case "${1}" in
 	    --upstream-url)
 		UPSTREAM_URL="${2}" &&
-		    shift 2
+		    shift 2 &&
+		    true
 		;;
 	    --upstream-branch)
 		UPSTREAM_BRANCH="${2}" &&
-		    shift 2
+		    shift 2 &&
+		    true
+		;;
+	    --wifi-ssid)
+		WIFI_SSID="${2}" &&
+		    shift 2 &&
+		    true
+		;;
+	    --wifi-password)
+		WIFI_PASSWORD="${2}" &&
+		    shift 2 &&
+		    true
 		;;
 	    *)
 		echo Unsupported Option &&
 		    echo ${1} &&
 		    echo ${0} &&
 		    echo ${@} &&
-		    exit 65
+		    exit 65 &&
+		    true
 		;;
 	esac
     done &&
+    (cat <<EOF
+UPSTREAM_URL
+UPSTREAM_BRANCH
+WIFI_SSID
+EOF
+    ) | while read VAR
+    do
+	eval VAL=\${${VAR}} &&
+	    if [ -z "${VAR}" ]
+	    then
+		echo Unspecified ${VAR} &&
+		    exit 66 &&
+		    true
+	    fi &&
+	    true
+    done &&
+    read -s -p "WIFI PASSWORD? " WIFI_PASSWORD &&
+    wpa_passphrase "${WIFI_SSID}" "${WIFI_PASSWORD}" | wpa_supplicant -B -i wlo1 -c &&
     read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSPHRASE &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gz.gpg &&
     gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
@@ -70,7 +101,7 @@ n
 n
 
 
-+64G
++264G
 
 n
 
@@ -101,30 +132,25 @@ EOF
 }
 EOF
     ) &&
-    cp ${TEMP_DIR}/secrets/init-read-only-pass.tar.gz /mnt/etc/nixos/installed/init-read-only-pass/src/secrets.tar.gz &&
-    cp ${TEMP_DIR}/secrets/init-wifi.tar.gz /mnt/etc/nixos/installed/init-wifi/src/secrets.tar.gz &&
-    if [ ! -z "${UPSTREAM_URL}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
+    mkdir ${TEMP_DIR}/configuration &&
+    git -C ${TEMP_DIR}/configuration init &&
+    git -C ${TEMP_DIR}/configuration remote add upstream "${UPSTREAM_URL}" &&
+    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
+    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
+    git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
+    if [ -f ${TEMP_DIR}/configuration/configuration.nix ]
     then
-	mkdir ${TEMP_DIR}/configuration &&
-	    git -C ${TEMP_DIR}/configuration init &&
-	    git -C ${TEMP_DIR}/configuration remote add upstream "${UPSTREAM_URL}" &&
-	    git -C ${TEMP_DIR}/configuration remote set-url --push upstream no_push &&
-	    git -C ${TEMP_DIR}/configuration fetch upstream "${UPSTREAM_BRANCH}" &&
-	    git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
-	    if [ -f ${TEMP_DIR}/configuration/configuration.nix ]
-	    then
-		cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos
-	    fi &&
-	    if [ -d ${TEMP_DIR}/configuration/custom ]
-	    then
-		rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos
-	    fi &&
-	    if [ -f ${TEMP_DIR}/configuration/install.sh ]
-	    then
-		sh ${TEMP_DIR}/configuration/install.sh
-	    fi &&
-	    true
+	cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos
     fi &&
+    if [ -d ${TEMP_DIR}/configuration/custom ]
+    then
+	rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos
+    fi &&
+    if [ -f ${TEMP_DIR}/configuration/install.sh ]
+    then
+	sh ${TEMP_DIR}/configuration/install.sh
+    fi &&
+    true
     PATH=/run/current-system/sw/bin nixos-generate-config --root /mnt &&
     PATH=/run/current-system/sw/bin nixos-install --root /mnt --no-root-passwd &&
     true
