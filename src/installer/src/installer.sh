@@ -101,6 +101,7 @@ EOF
 }
 EOF
     ) &&
+    cp ${TEMP_DIR}/secrets/pass.tar.gz /mnt/etc/nixos/installed/pass/src &&
     cp ${TEMP_DIR}/secrets/init-read-only-pass.tar.gz /mnt/etc/nixos/installed/init-read-only-pass/src/secrets.tar.gz &&
     cp ${TEMP_DIR}/secrets/init-wifi.tar.gz /mnt/etc/nixos/installed/init-wifi/src/secrets.tar.gz &&
     if [ ! -z "${UPSTREAM_URL}" ] && [ ! -z "${UPSTREAM_BRANCH}" ]
