@@ -20,16 +20,6 @@ TEMP_DIR=$(mktemp -d) &&
 		    shift 2 &&
 		    true
 		;;
-	    --wifi-ssid)
-		WIFI_SSID="${2}" &&
-		    shift 2 &&
-		    true
-		;;
-	    --wifi-password)
-		WIFI_PASSWORD="${2}" &&
-		    shift 2 &&
-		    true
-		;;
 	    *)
 		echo Unsupported Option &&
 		    echo ${1} &&
@@ -43,7 +33,6 @@ TEMP_DIR=$(mktemp -d) &&
     (cat <<EOF
 UPSTREAM_URL
 UPSTREAM_BRANCH
-WIFI_SSID
 EOF
     ) | while read VAR
     do
@@ -56,14 +45,19 @@ EOF
 	    fi &&
 	    true
     done &&
-    read -s -p "WIFI PASSWORD? " WIFI_PASSWORD &&
-    wpa_passphrase "${WIFI_SSID}" "${WIFI_PASSWORD}" | wpa_supplicant -B -i wlo1 -c &&
     read -s -p "SYMMETRIC PASSPHRASE? " SYMMETRIC_PASSPHRASE &&
     echo "${SYMMETRIC_PASSPHRASE}" | gpg --batch --passphrase-fd 0 --output ${TEMP_DIR}/secrets.tar.gz ${STORE_DIR}/etc/secrets.tar.gz.gpg &&
     gunzip --to-stdout ${TEMP_DIR}/secrets.tar.gz > ${TEMP_DIR}/secrets.tar &&
     mkdir ${TEMP_DIR}/secrets &&
     tar --extract --file ${TEMP_DIR}/secrets.tar --directory ${TEMP_DIR}/secrets &&
     source ${TEMP_DIR}/secrets/installer.env &&
+    read -p "ARE YOU READY? YES/no " ARE_YOU_READY &&
+    if [ "${ARE_YOU_READY}" != "YES" ]
+    then
+	echo YOU ARE NOT READY &&
+	    exit 64 &&
+	    true
+    fi &&
     (swapoff -L SWAP || true ) &&
     (umount /mnt/nix || true) &&
     (umount /mnt/boot || true) &&
@@ -72,7 +66,8 @@ EOF
     lvs --options NAME volumes | tail -n -1 | while read NAME
     do
 	wipefs --all /dev/volumes/${NAME} &&
-	    (lvremove --force /dev/volumes/${NAME} || true)
+	    (lvremove --force /dev/volumes/${NAME} || true) &&
+	    true
     done &&
     (vgremove --force /dev/volumes || true) &&
     (pvremove --force /dev/volumes || true) &&
@@ -85,7 +80,8 @@ ${I}
 w
 y
 EOF
-	    ) | gdisk /dev/sda
+	    ) | gdisk /dev/sda &&
+	    true
     done &&
     (cat <<EOF
 n
@@ -125,6 +121,7 @@ EOF
     mkdir /mnt/etc/nixos &&
     HASHED_USER_PASSWORD=$(echo -n ${USER_PASSWORD} | mkpasswd --stdin -m sha-512) &&
     cp --recursive ${STORE_DIR}/etc/installed /mnt/etc/nixos &&
+    cp --recursive ${TEMP_DIR}/secrets /mnt/etc/nixos/installed/secrets &&
     (cat > /mnt/etc/nixos/installed/password.nix <<EOF
 { config, pkgs, ... }:
 {
@@ -140,17 +137,19 @@ EOF
     git -C ${TEMP_DIR}/configuration checkout "upstream/${UPSTREAM_BRANCH}" &&
     if [ -f ${TEMP_DIR}/configuration/configuration.nix ]
     then
-	cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos
+	cp ${TEMP_DIR}/configuration/configuration.nix /mnt/etc/nixos &&
+	    true
     fi &&
     if [ -d ${TEMP_DIR}/configuration/custom ]
     then
-	rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos
+	rsync --verbose --recursive ${TEMP_DIR}/configuration/custom /mnt/etc/nixos &&
+	    true
     fi &&
     if [ -f ${TEMP_DIR}/configuration/install.sh ]
     then
-	sh ${TEMP_DIR}/configuration/install.sh
+	sh ${TEMP_DIR}/configuration/install.sh &&
+	    true
     fi &&
-    true
     PATH=/run/current-system/sw/bin nixos-generate-config --root /mnt &&
     PATH=/run/current-system/sw/bin nixos-install --root /mnt --no-root-passwd &&
     true
