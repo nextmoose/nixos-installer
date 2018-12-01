@@ -12,7 +12,7 @@ stdenv.mkDerivation {
       makeWrapper \
         $out/scripts/pass.sh \
         $out/bin/pass \
-        --set STORE_DIR $out &&
+        --set STORE_DIR $out \
         --set PATH ${lib.makeBinPath [ pkgs.coreutils ]} &&
       true
   '';
