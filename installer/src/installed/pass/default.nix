@@ -6,7 +6,7 @@ stdenv.mkDerivation {
   buildInputs = [ makeWrapper pkgs.gnutar ];
   installPhase = ''
     mkdir $out &&
-      cp scripts $out/scripts &&
+      cp --recursive scripts $out/scripts &&
       chmod 0500 $out/scripts/* &&
       tar --extract --verbose --gunzip --file pass.tar.gz  --directory $out &&
       makeWrapper \
