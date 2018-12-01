@@ -1,4 +1,4 @@
 #!/bin/sh
 
-cat "${STORE_DIR}/secrets/${2}" &&
+cat "${STORE_DIR}/pass/${2}" &&
   true
